@@ -5,7 +5,7 @@ class Benefit(models.Model):
     title = models.CharField(max_length = 50)
     summary = models.TextField(blank = True)
     description = models.TextField(blank = True)
-    address_info = models.CharField(blank = True)
+    address_info = models.CharField(blank = True, max_length = 50)
     published_date = models.DateTimeField(auto_now = True)
     image = models.ImageField(upload_to='benefit_thumbnails',blank = True, default='placeholder.png')
 
