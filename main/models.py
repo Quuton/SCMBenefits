@@ -1,20 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# class BenefitNews(models.Model):
-#     # Information provided by the owner
-#     number = models.CharField(max_length=20)
-#     description = models.TextField(blank = True)
-#     floor = models.IntegerField()
-#     type = models.CharField(max_length=50)
-#     image = models.ImageField(upload_to='room_images',blank = True, default='room_images/placeholder.png')
-#     size = models.IntegerField()
-#     price = models.FloatField()
-#     availability = models.BooleanField(default = True)
-
-#     # Fields handled by the server
-#     visitCount = models.IntegerField(default = 0)
-#     lastUpdated = models.DateTimeField(auto_now = True)
+class Benefit(models.Model):
+    title = models.CharField(max_length = 50)
+    summary = models.TextField(blank = True)
+    description = models.TextField(blank = True)
+    address_info = models.CharField(blank = True)
+    published_date = models.DateTimeField(auto_now = True)
+    image = models.ImageField(upload_to='benefit_thumbnails',blank = True, default='placeholder.png')
 
 
-# Create your models here.
+class Announcement(models.Model):
+    title = models.CharField(max_length = 50)
+    summary = models.TextField(blank = True)
+    description = models.TextField(blank = True)
+    published_date = models.DateTimeField(auto_now = True)
+    image = models.ImageField(upload_to='announcement_thumbnails',blank = True, default='placeholder.png')
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length = 11)
+    preferences_notify_benefits = models.BooleanField(default = True)
+    preferences_notify_announcements = models.BooleanField(default = True)
+
