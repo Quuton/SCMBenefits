@@ -64,3 +64,9 @@ def save_announcement(data:dict, id = None):
         temp.save()
         
     return temp
+
+def delete_benefit(id):
+    Benefit.objects.filter(id = id).delete()
+
+def delete_announcement(id):
+    Announcement.objects.filter(id = id).delete()
