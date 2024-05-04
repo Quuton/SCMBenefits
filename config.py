@@ -1,0 +1,3 @@
+HTTPSMS_API_KEY = "QW1jW_8JEGn0GPmtL_SXDP9pV4yMFwGkQizNVVna6BoseYWKpRftc5znaXa5BxWe"
+HTTPSMS_ENDPOINT_URL = "https://api.httpsms.com/v1/messages/send"
+HTTPSMS_ACTOR_NUMBER = "+639615810191"

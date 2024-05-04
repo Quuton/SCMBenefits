@@ -7,16 +7,17 @@ import model_interface as mi
 
 MAIN_PATH = 'main/'
 TEMPLATES = {'home':'index.html',
-             'announcements':'Announcements.html',
-             'benefits':'Benefits.html',
-             'login':'Login.html',
-             'signup':'Signup.html',
-             'announcement':'NONAME',
-             'benefit':'NONAME',
-             'benefit_add_form':'',
-             'announcement_add_form':'',
-             'benefit_edit_form':'',
-             'announcement_edit_form':''}
+            'announcements':'Announcements.html',
+            'benefits':'Benefits.html',
+            'login':'Login.html',
+            'signup':'Signup.html',
+            'announcement':'',
+            'benefit':'',
+            'benefit_add_form':'',
+            'announcement_add_form':'',
+            'benefit_edit_form':'',
+            'announcement_edit_form':''
+}
 
 
 # Create your views here.
@@ -29,12 +30,12 @@ def forbidden(request):
     return render(request, "forbidden")
 
 def announcements(request):
-    context = None
+    context = mi.get_all_announcement()
 
     return render(request, MAIN_PATH + TEMPLATES['announcements'], context = context)
 
 def benefits(request):  
-    context = None
+    context = mi.get_all_benefit
 
     return render(request, MAIN_PATH + TEMPLATES['benefits'], context = context)
 
@@ -51,14 +52,14 @@ def signup(request):
         return render(request, MAIN_PATH + TEMPLATES['signup'])
 
 def get_benefit(request, id: int = None):
-    context = None
+    context = mi.get_benefit(id)
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    return render(request, MAIN_PATH + TEMPLATES['benefit'], context = context)
 
 def get_announcement(request, id: int = None):
-    context = None
+    context = mi.get_announcement(id)
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    return render(request, MAIN_PATH + TEMPLATES['announcement'], context = context)
 
 def delete_benefit(request, id: int = None):
     if not (request.user.is_superuser and request.user.is_authenticated):
@@ -67,7 +68,7 @@ def delete_benefit(request, id: int = None):
     # I really HATE this, i would want the user to send a DELETE request, but its not possible with vanilla html
     if (request.method == "GET" and id != None):
         mi.delete_benefit(id)
-        TEMPLATES['home']
+        return redirect('/benefits')
     else:   
         return redirect('/')
 
@@ -77,11 +78,11 @@ def delete_announcement(request, id: int = None):
 
     if (request.method == "GET" and id != None):
         mi.delete_announcement(id)
-        TEMPLATES['home']
+        return redirect('/announcements')
     else:
         return redirect('/')
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    
 
 def edit_benefit(request, id: int = None):
     context = None
@@ -94,11 +95,20 @@ def edit_announcement(request, id: int = None):
     return render(request, MAIN_PATH + 'index.html', context = context)
 
 def add_benefit(request):
-    context = None
+    if not (request.user.is_superuser and request.user.is_authenticated):
+        return redirect('/forbidden')
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    return render(request, MAIN_PATH + 'index.html')
 
 def add_announcement(request):
-    context = None
+    if not (request.user.is_superuser and request.user.is_authenticated):
+        return redirect('/forbidden')
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    if (request.method == "POST" and id != None):
+        # mi.delete_announcement(id)
+        # return redirect('/announcements')
+        pass
+    else:
+        return redirect('/')
+
+    return render(request, MAIN_PATH + 'index.html')
