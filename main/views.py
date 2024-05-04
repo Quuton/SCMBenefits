@@ -23,7 +23,7 @@ TEMPLATES = {'home':'index.html',
 # Create your views here.
 def home(request):
     context = None
-
+    # TODO
     return render(request, MAIN_PATH + TEMPLATES['home'], context = context)
 
 def forbidden(request):
@@ -35,17 +35,20 @@ def announcements(request):
     return render(request, MAIN_PATH + TEMPLATES['announcements'], context = context)
 
 def benefits(request):  
-    context = mi.get_all_benefit
-
+    context = mi.get_all_benefit()
     return render(request, MAIN_PATH + TEMPLATES['benefits'], context = context)
 
 def login(request):
+    # TODO
+
     if request.user.is_authenticated:
         return redirect('/')
     else:
         return render(request, MAIN_PATH + TEMPLATES['login'])
 
 def signup(request):
+    # TODO
+
     if request.user.is_authenticated:
         return redirect('/')
     else:
@@ -53,12 +56,12 @@ def signup(request):
 
 def get_benefit(request, id: int = None):
     context = mi.get_benefit(id)
-
+    # TODO
     return render(request, MAIN_PATH + TEMPLATES['benefit'], context = context)
 
 def get_announcement(request, id: int = None):
     context = mi.get_announcement(id)
-
+    # TODO
     return render(request, MAIN_PATH + TEMPLATES['announcement'], context = context)
 
 def delete_benefit(request, id: int = None):
@@ -98,17 +101,44 @@ def add_benefit(request):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
 
-    return render(request, MAIN_PATH + 'index.html')
+    if (request.method == "POST" and id != None):
+        title = request.POST['title']
+        summary = request.POST['summary']
+        description = request.POST['description']
+        address_info = request.POST['address_info']
+        published_date = request.POST['published_date']
+
+        image = None
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
+        
+        notify_subscribers = (request.POST.getlist('notify_subscribers') != [])
+
+        # TODO add sms notification shit here xd
+
+        return redirect('/')
+    else:
+        return render(request, MAIN_PATH + TEMPLATES['benefit_add_form'])
+
+    
 
 def add_announcement(request):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
 
     if (request.method == "POST" and id != None):
-        # mi.delete_announcement(id)
-        # return redirect('/announcements')
-        pass
-    else:
-        return redirect('/')
+        title = request.POST['title']
+        summary = request.POST['summary']
+        description = request.POST['description']
+        address_info = request.POST['address_info']
+        published_date = request.POST['published_date']
 
-    return render(request, MAIN_PATH + 'index.html')
+        image = None
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
+        
+        # TODO
+
+        return redirect('/')
+    else:
+        return render(request, MAIN_PATH + TEMPLATES['announcement_add_form'])
