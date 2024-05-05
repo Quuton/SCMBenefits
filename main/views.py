@@ -4,7 +4,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib import auth
 from . import model_interface as mi
-
+from .utility import messaging
+import asyncio
 MAIN_PATH = 'main/'
 TEMPLATES = {'home':'index.html',
             'announcements':'Announcements.html',
@@ -129,10 +130,11 @@ def add_benefit(request):
         image = None
         if request.FILES.get('image') != None:
             image = request.FILES.get('image')
-        
-        notify_subscribers = (request.POST.getlist('notify_subscribers') != [])
 
-        # TODO add sms notification shit here xd
+        mi.save_benefit(title, summary, description, address_info, published_date, image)
+        
+        if (request.POST.getlist('notify_subscribers') != []):
+            asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", mi.get_phone_list_benefits()))
 
         return redirect('/')
     else:
@@ -148,14 +150,16 @@ def add_announcement(request):
         title = request.POST['title']
         summary = request.POST['summary']
         description = request.POST['description']
-        address_info = request.POST['address_info']
         published_date = request.POST['published_date']
 
         image = None
         if request.FILES.get('image') != None:
             image = request.FILES.get('image')
-        
-        # TODO
+
+        mi.save_announcement(title, summary, description, published_date, image)
+
+        if (request.POST.getlist('notify_subscribers') != []):
+            asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", mi.get_phone_list_announcements()))
 
         return redirect('/')
     else:

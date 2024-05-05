@@ -11,26 +11,26 @@ def get_all_benefit(max_posts = 999):
 def get_benefit(id):
     return Benefit.objects.get(id = id)
 
-def save_benefit(data:dict, id = None):
+def save_benefit(title, summary, description, address_info, published_date, image, id = None):
     temp = None
     if id != None:
         temp = Benefit.objects.get(id = id)
-        temp.title = data.get('title')
-        temp.summary = data.get('summary')
-        temp.description = data.get('description')
-        temp.address_info = data.get('address_info')
-        temp.published_date = data.get('published_date')
-        temp.image = data.get('image')
+        temp.title = title
+        temp.summary = summary
+        temp.description = description
+        temp.address_info = address_info
+        temp.published_date = published_date
+        temp.image = image
         temp.save()
 
     else:
         temp = Benefit(
-            title = data.get('title'),
-            summary = data.get('summary'),
-            description = data.get('description'),
-            address_info = data.get('address_info'),
-            published_date = data.get('published_date'),
-            image = data.get('image')
+            title = title,
+            summary = summary,
+            description = description,
+            address_info = address_info,
+            published_date = published_date,
+            image = image
         )
         temp.save()
 
@@ -42,24 +42,24 @@ def get_all_announcement(max_posts = 999):
 def get_announcement(id):
     return Announcement.objects.get(id = id)
 
-def save_announcement(data:dict, id = None):
+def save_announcement(title, summary, description, published_date, image, id = None):
     temp = None
     if id != None:
         temp = Announcement.objects.get(id = id)
-        temp.title = data.get('title')
-        temp.summary = data.get('summary')
-        temp.description = data.get('description')
-        temp.published_date = data.get('published_date')
-        temp.image = data.get('image')
+        temp.title = title
+        temp.summary = summary
+        temp.description = description
+        temp.published_date = published_date
+        temp.image = image
         temp.save()
 
     else:
         temp = Announcement(
-            title = data.get('title'),
-            summary = data.get('summary'),
-            description = data.get('description'),
-            published_date = data.get('published_date'),
-            image = data.get('image')
+            title = title,
+            summary = summary,
+            description = description,
+            published_date = published_date,
+            image = image
         )
         temp.save()
         
@@ -77,3 +77,9 @@ def register_user(username:str, first_name:str, last_name:str, password:str, pho
     user.groups.add(group)
     profile = UserProfile(user = user, phone = phone)
     profile.save()
+
+def get_phone_list_benefits():
+    return [i.phone for i in UserProfile.objects.filter(preferences_notify_benefits = True)]
+
+def get_phone_list_announcements():
+    return [i.phone for i in UserProfile.objects.filter(preferences_notify_announcements = True)]
