@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib import auth
-import model_interface as mi
+from . import model_interface as mi
 
 MAIN_PATH = 'main/'
 TEMPLATES = {'home':'index.html',
@@ -22,46 +22,66 @@ TEMPLATES = {'home':'index.html',
 
 # Create your views here.
 def home(request):
-    context = None
-    # TODO
+    context = {'announcements':mi.get_all_announcement(4),
+               'benefits':mi.get_all_benefit(4)}
+    
     return render(request, MAIN_PATH + TEMPLATES['home'], context = context)
 
 def forbidden(request):
     return render(request, "forbidden")
 
 def announcements(request):
-    context = mi.get_all_announcement()
+    context = {'annnouncements':mi.get_all_announcement()}
 
     return render(request, MAIN_PATH + TEMPLATES['announcements'], context = context)
 
 def benefits(request):  
-    context = mi.get_all_benefit()
+    context = {'benefits':mi.get_all_benefit()}
     return render(request, MAIN_PATH + TEMPLATES['benefits'], context = context)
 
 def login(request):
-    # TODO
-
     if request.user.is_authenticated:
         return redirect('/')
+    
+    elif request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(request, username = username, password = password)
+
+        if user is not None:
+            auth.login(request, user)
+            return redirect('/')
+        else:
+            return render(request, MAIN_PATH + TEMPLATES['login'], context = {'auth_status':'Credentials do not match any account!'})
+
     else:
         return render(request, MAIN_PATH + TEMPLATES['login'])
 
-def signup(request):
-    # TODO
+def logout(request):
+    auth.logout(request)
+    return redirect('/')
 
+def signup(request):
     if request.user.is_authenticated:
         return redirect('/')
     else:
-        return render(request, MAIN_PATH + TEMPLATES['signup'])
+        if request.method == 'POST':
+            username = request.POST['username']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            password = request.POST['password']
+            phone = request.POST['phone']
+            mi.register_user(username, first_name, last_name, password, phone, email)
+        else:
+            return render(request, MAIN_PATH + TEMPLATES['signup'])
 
 def get_benefit(request, id: int = None):
-    context = mi.get_benefit(id)
-    # TODO
+    context = {'benefit':mi.get_benefit(id)}
     return render(request, MAIN_PATH + TEMPLATES['benefit'], context = context)
 
 def get_announcement(request, id: int = None):
-    context = mi.get_announcement(id)
-    # TODO
+    context = {'announcement':mi.get_announcement(id)}
     return render(request, MAIN_PATH + TEMPLATES['announcement'], context = context)
 
 def delete_benefit(request, id: int = None):
@@ -84,8 +104,6 @@ def delete_announcement(request, id: int = None):
         return redirect('/announcements')
     else:
         return redirect('/')
-
-    
 
 def edit_benefit(request, id: int = None):
     context = None

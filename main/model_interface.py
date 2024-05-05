@@ -70,3 +70,10 @@ def delete_benefit(id):
 
 def delete_announcement(id):
     Announcement.objects.filter(id = id).delete()
+
+def register_user(username:str, first_name:str, last_name:str, password:str, phone:str, email:str = None):
+    user = User.objects.create_user(username = username, email = email, password = password, first_name = first_name, last_name = last_name)
+    group = Group.objects.get(name='User')
+    user.groups.add(group)
+    profile = UserProfile(user = user, phone = phone)
+    profile.save()

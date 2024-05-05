@@ -3,3 +3,4 @@ from . import models
 
 admin.site.register(models.Benefit)
 admin.site.register(models.Announcement)
+admin.site.register(models.UserProfile)
