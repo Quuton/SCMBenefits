@@ -6,18 +6,20 @@ from django.contrib import auth
 from . import model_interface as mi
 from .utility import messaging
 import asyncio
+from .utility import config
+import threading
 MAIN_PATH = 'main/'
 TEMPLATES = {'home':'index.html',
-            'announcements':'Announcements.html',
-            'benefits':'Benefits.html',
-            'login':'Login.html',
-            'signup':'Signup.html',
-            'announcement':'',
-            'benefit':'',
-            'benefit_add_form':'',
-            'announcement_add_form':'',
-            'benefit_edit_form':'',
-            'announcement_edit_form':''
+            'announcements':'announcements.html',
+            'benefits':'benefits.html',
+            'login':'login.html',
+            'signup':'signup.html',
+            'announcement':'announcement.html',
+            'benefit':'benefit.html',
+            'benefit_add_form':'benefit_add_form.html',
+            'announcement_add_form':'announcement_add_form.html',
+            'benefit_edit_form':'benefit_edit_form.html',
+            'announcement_edit_form':'announcement_edit_form.html'
 }
 
 
@@ -31,13 +33,18 @@ def home(request):
 def forbidden(request):
     return render(request, "forbidden")
 
+def not_found(request):
+    return render(request, "Not found 404 :(")
+
 def announcements(request):
-    context = {'annnouncements':mi.get_all_announcement()}
+    context = {'announcements':mi.get_all_announcement(10)}
 
     return render(request, MAIN_PATH + TEMPLATES['announcements'], context = context)
 
 def benefits(request):  
-    context = {'benefits':mi.get_all_benefit()}
+    context = {'benefits':mi.get_all_benefit(10)
+            }
+    
     return render(request, MAIN_PATH + TEMPLATES['benefits'], context = context)
 
 def login(request):
@@ -70,15 +77,18 @@ def signup(request):
             username = request.POST['username']
             first_name = request.POST['first_name']
             last_name = request.POST['last_name']
-            email = request.POST['email']
+            email = request.POST['email']   
             password = request.POST['password']
             phone = request.POST['phone']
             mi.register_user(username, first_name, last_name, password, phone, email)
+            return redirect('/login/')
         else:
             return render(request, MAIN_PATH + TEMPLATES['signup'])
 
 def get_benefit(request, id: int = None):
-    context = {'benefit':mi.get_benefit(id)}
+    context = {'benefit':mi.get_benefit(id),
+               'gmaps_api_key':config.GMAPS_EMBED_API_KEY}
+    
     return render(request, MAIN_PATH + TEMPLATES['benefit'], context = context)
 
 def get_announcement(request, id: int = None):
@@ -110,7 +120,7 @@ def edit_benefit(request, id: int):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
     
-    if (id == None or not mi.check_benefit_exists()):
+    if (id == None or not mi.check_benefit_exists(id)):
         return redirect('/not-found')
     
     temp_benefit = mi.get_benefit(id)
@@ -120,25 +130,24 @@ def edit_benefit(request, id: int):
         summary = request.POST['summary']
         description = request.POST['description']
         address_info = request.POST['address_info']
-        published_date = request.POST['published_date']
 
         image = temp_benefit.image
-        if request.FILES.get('image') != None:
-            image = request.FILES.get('image')
+        if request.FILES.get('thumbnail') != None:
+            image = request.FILES.get('thumbnail')
 
-        mi.save_benefit(title, summary, description, address_info, published_date, image, id)
-
+        mi.save_benefit(title, summary, description, address_info, image, id)
+        return redirect(f'/get-benefit/{id}')
     else:
         context = {'benefit':mi.get_benefit(id),
                     'id':id
                 }
         return render(request, MAIN_PATH + TEMPLATES['benefit_edit_form'], context = context)
 
-def edit_announcement(request, id):
+def edit_announcement(request, id:int):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
     
-    if (id == None or not mi.check_announcement_exists()):
+    if (id == None or not mi.check_announcement_exists(id)):
         return redirect('/not-found')
     
     temp_announcement = mi.get_announcement(id)
@@ -147,16 +156,15 @@ def edit_announcement(request, id):
         title = request.POST['title']
         summary = request.POST['summary']
         description = request.POST['description']
-        published_date = request.POST['published_date']
 
         image = temp_announcement.image
-        if request.FILES.get('image') != None:
-            image = request.FILES.get('image')
+        if request.FILES.get('thumbnail') != None:
+            image = request.FILES.get('thumbnail')
 
-        mi.save_announcement(title, summary, description, published_date, image, id)
-
+        mi.save_announcement(title, summary, description, image, id)
+        return redirect(f'/get-announcement/{id}')
     else:
-        context = {'benefit':mi.get_announcement(id),
+        context = {'announcement':mi.get_announcement(id),
                     'id':id
                 }
         return render(request, MAIN_PATH + TEMPLATES['announcement_edit_form'], context = context)
@@ -170,18 +178,20 @@ def add_benefit(request):
         summary = request.POST['summary']
         description = request.POST['description']
         address_info = request.POST['address_info']
-        published_date = request.POST['published_date']
 
         image = None
-        if request.FILES.get('image') != None:
-            image = request.FILES.get('image')
+        if request.FILES.get('thumbnail') != None:
+            image = request.FILES.get('thumbnail')
 
-        mi.save_benefit(title, summary, description, address_info, published_date, image)
+        mi.save_benefit(title, summary, description, address_info, image)
         
         if (request.POST.getlist('notify_subscribers') != []):
-            asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", mi.get_phone_list_benefits()))
+            SMS_MESSAGE = f"New Benefit!: {title}\n{summary}\n=====================\nDetails:\n{description}"
+            thread = threading.Thread(target = messaging.send_batch_sms(SMS_MESSAGE, [messaging.format_local_number_philippines(i) for i in mi.get_phone_list_benefits()]), name = 'thread')
+            thread.start()                       
+            # asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", [messaging.format_local_number_philippines(i) for i in mi.get_phone_list_benefits()]))
 
-        return redirect('/')
+        return redirect('/benefits/')
     else:
         return render(request, MAIN_PATH + TEMPLATES['benefit_add_form'])
 
@@ -195,18 +205,20 @@ def add_announcement(request):
         title = request.POST['title']
         summary = request.POST['summary']
         description = request.POST['description']
-        published_date = request.POST['published_date']
 
         image = None
-        if request.FILES.get('image') != None:
-            image = request.FILES.get('image')
+        if request.FILES.get('thumbnail') != None:
+            image = request.FILES.get('thumbnail')
 
-        mi.save_announcement(title, summary, description, published_date, image)
+        mi.save_announcement(title, summary, description, image)
 
         if (request.POST.getlist('notify_subscribers') != []):
-            asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", mi.get_phone_list_announcements()))
+            SMS_MESSAGE = f"New Benefit!: {title}\n{summary}\n=====================\nDetails:\n{description}"
+            thread = threading.Thread(target = messaging.send_batch_sms(SMS_MESSAGE, [messaging.format_local_number_philippines(i) for i in mi.get_phone_list_announcements()]), name = 'thread')
+            thread.start()  
+            # asyncio.create_task(messaging.send_batch_sms(f"{title}\n{summary}", [messaging.format_local_number_philippines(i) for i in mi.get_phone_list_benefits()]))
 
-        return redirect('/')
+        return redirect('/announcements/')
     else:
         return render(request, MAIN_PATH + TEMPLATES['announcement_add_form'])
 

@@ -1,0 +1,44 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}{{benefit.title}}{% endblock %}
+{% block content %}
+    <div class="container-fluid panel_large">
+        <h1>{{benefit.title}}</h1>
+        <i>Posted on: {{benefit.published_date}}</i>
+        {% if benefit.image %}
+            <img src="{{benefit.image.url}}">
+        {% else %}
+            <img src="{% static 'images/placeholder/placeholder_thumbnail.png'%}">
+        {% endif %}
+        
+        <div class="text">
+            <h2>{{benefit.summary}}</h2>
+            <p>{{benefit.description}}</p>
+            <h3>Benefit Location:</h>
+            <p>{{benefit.address_info}}</p>
+        </div>
+        <div class="media">
+            <iframe
+                width="600"
+                height="450"
+                style="border:0"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps/embed/v1/place?key={{gmaps_api_key}}
+                    &q={{benefit.address_info}}">
+            </iframe>
+        </div>
+        {% if user.is_superuser %}
+            <div class="container-fluid">
+                <a href="/benefits/"><button type="button" class="btn btn-primary">Return</button></a>
+                <a href="/edit-benefit/{{benefit.id}}"><button type="button" class="btn btn-secondary">Edit</button></a>
+                <a href="/delete-benefit/{{benefit.id}}"><button type="button" class="btn btn-danger">Delete</button></a>
+            </div>
+        {% else %}
+            <div class="container-fluid">
+                <a href="/benefits/"><button type="button" class="btn btn-primary">Return</button></a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

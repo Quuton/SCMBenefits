@@ -1,0 +1,46 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}Post Creation{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/form.css' %}">{% endblock %}
+{% block scripts %}<script src="{% static 'js/thumbnail_preview.js' %}"></script>{% endblock %}
+{% block content %}
+    <div class="panel_large">
+            <form enctype="multipart/form-data" action="/add-announcement/" method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Post an announcement</legend>
+                <div class="formInputSet">
+                    <label class="b" for="title">Post Title</label>
+                    <input type="text" name="title" id="title" placeholder="Post Title">
+                </div>
+                <div class="formInputSet">
+                    <label class="b" for="summary">Post Summary</label>
+                    <textarea name="summary" id="summary" placeholder="Post Summary"></textarea>
+                </div>
+                <div class="formInputSet">
+                    <label class="b" for="description">Post Description</label>
+                    <textarea name="description" id="description" placeholder="Post Description"></textarea>
+                </div>
+                </fieldset>
+            <fieldset>
+                <legend>Thumbnail photo</legend>    
+                <div class="formInputSet">
+                    <label class="b" for="thumbnail">Upload a thumbnail for the post</label>
+                    <input type="file" accept="image/*" name="thumbnail" id="thumbnail" onchange="loadPreview(event)">
+                </div>
+                <img id="post_thumbnail" src="{% static 'images/placeholder/placeholder_thumbnail.png' %}">
+            </fieldset>
+            <fieldset>
+                <input type="checkbox" id="notify_subscribers" name="notify_subscribers" value="notify_subscribers">
+                <label for="notify_subscribers">Notify subscribers?</label>
+            </fieldset>
+            <fieldset>
+                <legend>Save information?</legend>
+                <div class="formInputSet">
+                    <a href="/announcements/"><button type="button" class="btn btn-danger">Discard Changes</button></a>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </fieldset>
+            </form>
+        </div>
+{% endblock %}

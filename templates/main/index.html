@@ -1,11 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    Helo der
-</body>
-</html>
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}SCBenefits{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/home.css' %}">{% endblock %}
+
+{% block content %}
+    <div class="container-fluid front-showcase">
+        <div class="container front-wrapper">
+            <div class="front-showcase-text-section">
+                <div class="section">
+                    <h1>We give seniors the best they deserve</h1>
+                </div>
+                <div class="section">
+                    <p>A lifetime of contributions deserves recognition. 
+                        These benefits are a token of our appreciation for your commitment.
+                        See what awaits for you.</p>
+                    <a href="/benefits/"><button class="hyperlink">See Benefits</button></a>
+                </div>
+                <div class="section">
+                    <p>Keep up to date with the latest news and announcements from the city. Find out whats happening near you.</p>                
+                        <a href="/announcements/"><button class="hyperlink">See Announcements</button></a>
+                </div>
+            </div>
+            <div class="front-showcase-image-section">
+                <img src="{% static 'images/couple.jpg'%}">
+            </div>
+        </div>
+    </div>
+{% endblock %}
