@@ -18,7 +18,7 @@ class Announcement(models.Model):
     image = models.ImageField(upload_to='announcement_thumbnails',blank = True, default='placeholder.png')
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete = models.CASCADE)
     phone = models.CharField(max_length = 11)
     preferences_notify_benefits = models.BooleanField(default = True)
     preferences_notify_announcements = models.BooleanField(default = True)
