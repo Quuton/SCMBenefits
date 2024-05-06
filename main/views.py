@@ -106,21 +106,66 @@ def delete_announcement(request, id: int = None):
     else:
         return redirect('/')
 
-def edit_benefit(request, id: int = None):
-    context = None
+def edit_benefit(request, id: int):
+    if not (request.user.is_superuser and request.user.is_authenticated):
+        return redirect('/forbidden')
+    
+    if (id == None or not mi.check_benefit_exists()):
+        return redirect('/not-found')
+    
+    temp_benefit = mi.get_benefit(id)
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+    if (request.method == "POST"):
+        title = request.POST['title']
+        summary = request.POST['summary']
+        description = request.POST['description']
+        address_info = request.POST['address_info']
+        published_date = request.POST['published_date']
 
-def edit_announcement(request, id: int = None):
-    context = None
+        image = temp_benefit.image
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
 
-    return render(request, MAIN_PATH + 'index.html', context = context)
+        mi.save_benefit(title, summary, description, address_info, published_date, image, id)
+
+    else:
+        context = {'benefit':mi.get_benefit(id),
+                    'id':id
+                }
+        return render(request, MAIN_PATH + TEMPLATES['benefit_edit_form'], context = context)
+
+def edit_announcement(request, id):
+    if not (request.user.is_superuser and request.user.is_authenticated):
+        return redirect('/forbidden')
+    
+    if (id == None or not mi.check_announcement_exists()):
+        return redirect('/not-found')
+    
+    temp_announcement = mi.get_announcement(id)
+
+    if (request.method == "POST"):
+        title = request.POST['title']
+        summary = request.POST['summary']
+        description = request.POST['description']
+        published_date = request.POST['published_date']
+
+        image = temp_announcement.image
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
+
+        mi.save_announcement(title, summary, description, published_date, image, id)
+
+    else:
+        context = {'benefit':mi.get_announcement(id),
+                    'id':id
+                }
+        return render(request, MAIN_PATH + TEMPLATES['announcement_edit_form'], context = context)
 
 def add_benefit(request):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
 
-    if (request.method == "POST" and id != None):
+    if (request.method == "POST"):
         title = request.POST['title']
         summary = request.POST['summary']
         description = request.POST['description']
@@ -146,7 +191,7 @@ def add_announcement(request):
     if not (request.user.is_superuser and request.user.is_authenticated):
         return redirect('/forbidden')
 
-    if (request.method == "POST" and id != None):
+    if (request.method == "POST"):
         title = request.POST['title']
         summary = request.POST['summary']
         description = request.POST['description']
@@ -164,3 +209,5 @@ def add_announcement(request):
         return redirect('/')
     else:
         return render(request, MAIN_PATH + TEMPLATES['announcement_add_form'])
+
+# need view for editing account details thansk

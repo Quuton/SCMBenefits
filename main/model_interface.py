@@ -83,3 +83,9 @@ def get_phone_list_benefits():
 
 def get_phone_list_announcements():
     return [i.phone for i in UserProfile.objects.filter(preferences_notify_announcements = True)]
+
+def check_benefit_exists(id:int):
+    return Benefit.objects.filter(id = id).exists()
+
+def check_announcement_exists(id:int):
+    return Announcement.objects.filter(id = id).exists()
