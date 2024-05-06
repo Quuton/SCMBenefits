@@ -1,0 +1,125 @@
+header {
+    background-color: rgba(255, 255, 255, 0.923);
+    padding-block:10px;
+    li {
+        font-size: 25px;
+    }
+}
+body {
+    background-image: url("/static/images/frontpage.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 50% 50%;
+}
+
+button.hyperlink {
+    width:auto;
+    max-width:250px;
+    margin-inline: auto;
+    color:white;
+    border-radius:4px;
+    display:block;
+    text-align: center;
+    border:0;
+    background-color: rgba(85, 85, 85, 0.918);
+    padding-inline:2em;
+    padding-block: 0.3em;
+}
+
+div.panel {
+    max-width:60vw;
+    margin-inline:auto;
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
+    padding:20px;
+    margin-block:20px;
+    border-radius:20px;
+    background-color:white;
+    position:relative;
+
+
+    div.panel_content {
+        width:100%;
+
+        div.text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display:inline-block;
+            vertical-align: top;
+            width:59%;
+
+            p {
+                font-size: larger;
+            }
+
+            i {
+                font-size: small;
+            }
+        }
+        div.thumbnail {
+            display:inline-block;
+            width:40%;
+            
+            img{
+                display: block;
+                width:20vw;
+                max-height:15vw;
+                margin-inline:auto;
+                object-fit: cover;
+                object-position: 50% 50%;
+            }
+
+        }
+    }
+}
+
+div.panel_large {
+    max-width:85vw;
+    margin-inline:auto;
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
+    padding:20px;
+    margin-block:20px;
+    border-radius:20px;
+    background-color:white;
+    position:relative;
+
+    img {
+        display:block;
+        margin-inline:auto;
+        margin-block:2em;
+        max-width:40vw;
+        max-height:30vh;
+        background-position: 50% 50%;
+        object-fit: cover;
+    }
+
+    p {
+        font-size: 28px;
+    }
+
+    div.text {
+        display:inline-block;
+        vertical-align: top;
+        width:59%;
+
+        p {
+            font-size: larger;
+        }
+
+        i {
+            font-size: small;
+        }
+    }
+    div.media {
+        display:inline-block;
+        width:40%;
+        
+        iframe{
+            display:block;
+            margin-inline: auto;
+        }
+
+    }
+    
+}
+

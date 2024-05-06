@@ -1,0 +1,64 @@
+body {
+    background-image: url("/images/frontpage.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: 50% 50%;
+}
+
+div.front-showcase {
+    padding-block:0;
+    margin-top:20vh;
+    display:block;
+    div.front-wrapper{
+        background-color: rgba(255, 255, 255, 0.923);
+        padding-block: 20px;
+        padding-inline:2em;
+
+        div.front-showcase-text-section {
+            display:inline-block;
+            width:49%;
+    
+            div.section {
+                display:block;
+                button.hyperlink {
+                    margin-inline: auto;
+                    margin-block:12px;
+                }
+    
+                h1{
+                    font-size: 48px;
+                }
+    
+                h1:first-letter {
+                    font-size: 64px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                }
+
+                p {
+                    text-align: justify;
+                    font-size: 20px;
+                }
+            }
+    
+        }
+        
+        div.front-showcase-image-section {
+            display:inline-block;
+            vertical-align:top;
+            width:50%;
+            height:auto;
+            margin-block: auto;
+            padding-block:50px;
+            padding-inline: 20px;
+
+            img {
+                width:100%;
+                height:100%;
+                border-radius: 50% 50%;
+                object-fit: contain;
+            }
+        }
+    }
+}

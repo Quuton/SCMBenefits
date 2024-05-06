@@ -1,0 +1,29 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}{{announcement.title}}{% endblock %}
+{% block content %}
+    <div class="container-fluid panel_large">
+        <h1>{{announcement.title}}</h1>
+        <i>Posted on: {{announcement.published_date}}</i>
+        {% if announcement.image %}
+            <img src="{{announcement.image.url}}">
+        {% else %}
+            <img src="{% static 'images/placeholder/placeholder_thumbnail.png'%}">
+        {% endif %}
+
+        <h2>{{announcement.summary}}</h2>
+        <p>{{announcement.description}}</p>
+    
+        {% if user.is_superuser %}
+            <div class="container-fluid">
+                <a href="/announcements/"><button type="button" class="btn btn-primary">Return</button></a>
+                <a href="/edit-announcement/{{announcement.id}}"><button type="button" class="btn btn-secondary">Edit</button></a>
+                <a href="/delete-announcement/{{announcement.id}}"><button type="button" class="btn btn-danger">Delete</button></a>
+            </div>
+        {% else %}
+            <div class="container-fluid">
+                <a href="/announcements/"><button type="button" class="btn btn-primary">Return</button></a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

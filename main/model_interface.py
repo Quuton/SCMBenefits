@@ -11,7 +11,7 @@ def get_all_benefit(max_posts = 999):
 def get_benefit(id):
     return Benefit.objects.get(id = id)
 
-def save_benefit(title, summary, description, address_info, published_date, image, id = None):
+def save_benefit(title, summary, description, address_info, image, id = None):
     temp = None
     if id != None:
         temp = Benefit.objects.get(id = id)
@@ -19,7 +19,6 @@ def save_benefit(title, summary, description, address_info, published_date, imag
         temp.summary = summary
         temp.description = description
         temp.address_info = address_info
-        temp.published_date = published_date
         temp.image = image
         temp.save()
 
@@ -29,7 +28,6 @@ def save_benefit(title, summary, description, address_info, published_date, imag
             summary = summary,
             description = description,
             address_info = address_info,
-            published_date = published_date,
             image = image
         )
         temp.save()
@@ -42,14 +40,13 @@ def get_all_announcement(max_posts = 999):
 def get_announcement(id):
     return Announcement.objects.get(id = id)
 
-def save_announcement(title, summary, description, published_date, image, id = None):
+def save_announcement(title, summary, description, image, id = None):
     temp = None
     if id != None:
         temp = Announcement.objects.get(id = id)
         temp.title = title
         temp.summary = summary
         temp.description = description
-        temp.published_date = published_date
         temp.image = image
         temp.save()
 
@@ -58,7 +55,6 @@ def save_announcement(title, summary, description, published_date, image, id = N
             title = title,
             summary = summary,
             description = description,
-            published_date = published_date,
             image = image
         )
         temp.save()

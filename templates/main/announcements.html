@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+{% load static %}
+{% block title %}Announcements{% endblock %}
+{% block content %}
+    <div class="container-fluid panel">
+        <h1>Official Announcements</h1>
+        <p>Get up to datte on news from City officials in makati!</p>
+        {% if user.is_superuser %}
+            <div class="container-fluid">
+                <a href="/add-announcement/"><button type="button" class="btn btn-primary">Post something new!</button></a>
+            </div>
+        {% else %}
+        {% endif %}
+    </div>
+
+    {% for announcement in announcements %}
+    <div class="container-fluid panel">
+        <h2>{{announcement.title}}</h2>
+        <div class="panel_content">
+            <div class="text">
+                <p>{{announcement.summary}}</p>
+                <i>Posted on: {{announcement.published_date}}</i>
+            </div>
+            <div class="thumbnail">
+                {% if announcement.image %}
+                    <img src="{{announcement.image.url}}">
+                {% else %}
+                    <img src="{% static 'images/placeholder/placeholder_thumbnail.png' %}">
+                {% endif %}
+                
+            </div>
+        </div>
+        <a href="/get-announcement/{{announcement.id}}"><button class="hyperlink">Learn More</button></a>
+    </div>
+    {% empty %}
+        <div class="container-fluid panel">
+            <h2>Nothing here :(</h2>
+            <p>Looks like no announcements has been posted yet, come check back later.</p>
+        </div>
+    {% endfor %}
+
+{% endblock %}
